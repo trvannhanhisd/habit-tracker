@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Auth\Queries\" />
     <Folder Include="Common\Exceptions\" />
   </ItemGroup>
 

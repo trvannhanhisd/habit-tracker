@@ -14,6 +14,7 @@ namespace HabitTracker.Domain.Repository
         Task<Habit> CreateAsync(Habit habit);
         Task<int> UpdateAsync(Habit habit);
         Task<int> DeleteAsync(int habitId);
-
+        Task<List<Habit>> GetAllHabitsByUserIdAsync(int userId);
+        Task<int> ArchiveHabitAsync(int habitId);
     }
 }

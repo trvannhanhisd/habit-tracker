@@ -26,6 +26,13 @@ namespace HabitTracker.Infrastructure.Repository
             return await _context.Habits.ToListAsync();
         }
 
+        public async Task<List<Habit>> GetAllHabitsByUserIdAsync(int userId)
+        {
+            return await _context.Habits
+                .Where(h => h.UserId == userId)
+                .ToListAsync();
+        }
+
         public async Task<Habit> CreateAsync(Habit habit)
         {
             _context.Habits.Add(habit);
@@ -36,6 +43,19 @@ namespace HabitTracker.Infrastructure.Repository
         public async Task<int> UpdateAsync(Habit habit)
         {
             _context.Habits.Update(habit);
+            return await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> ArchiveHabitAsync(int habitId)
+        {
+            var habit =  await _context.Habits.FindAsync(habitId);
+
+            if (habit != null)
+            {
+                habit.IsArchived = true;
+                //_context.Habits.Update(habit);
+            }
+            
             return await _context.SaveChangesAsync();
         }
 

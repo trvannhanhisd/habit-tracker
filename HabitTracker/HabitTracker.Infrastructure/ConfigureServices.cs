@@ -16,6 +16,7 @@ namespace HabitTracker.Infrastructure
 
             services.AddScoped<IHabitRepository, HabitRepository>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }
