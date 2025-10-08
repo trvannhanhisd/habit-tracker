@@ -17,6 +17,6 @@ namespace HabitTracker.Domain.Entity
         public bool IsArchived { get; set; } = false; // Nếu user muốn tạm dừng habit
 
         public User? User { get; set; }
-        public ICollection<HabitLog> Logs { get; set; } = new List<HabitLog>();
+        public List<HabitLog> Logs { get; set; } = new List<HabitLog>();
     }
 }

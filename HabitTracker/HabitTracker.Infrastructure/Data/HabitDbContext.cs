@@ -13,6 +13,8 @@ namespace HabitTracker.Infrastructure.Data
     {
         public HabitDbContext(DbContextOptions<HabitDbContext> options) : base(options) { }
         public DbSet<Habit> Habits { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<HabitLog> HabitLogs { get; set; }
         // Configure entity relationships and constraints here
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
