@@ -9,6 +9,6 @@ namespace HabitTracker.Application.Features.Habits.Commands.DeleteHabit
 {
     public class DeleteHabitCommand : IRequest<int>
     {
-        public int Id { get; set; }
+        public int HabitId { get; set; }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HabitTracker.Application.Features.Auth.Commands.Register
 {
-    public class RegisterCommand : IRequest<UserViewModel?>
+    public class RegisterCommand : IRequest<UserViewModel>
     {
         public required string UserName { get; set; }
         public required string Email { get; set; }

@@ -23,7 +23,7 @@ namespace HabitTracker.Application.Features.Habits.Queries.GetHabitById
 
         public async Task<HabitViewModel> Handle(GetHabitByIdQuery request, CancellationToken cancellationToken)
         {
-            var habit = await _habitRepository.GetByIdAsync(request.HabitId);
+            var habit = await _habitRepository.GetHabitByIdAsync(request.HabitId);
             return _mapper.Map<HabitViewModel>(habit);
         }
     }

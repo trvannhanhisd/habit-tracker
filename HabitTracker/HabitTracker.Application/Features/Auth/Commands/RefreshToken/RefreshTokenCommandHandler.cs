@@ -1,18 +1,18 @@
 ﻿using HabitTracker.Application.Features.Auth.Commands.Login;
 using HabitTracker.Domain.Entity;
+using HabitTracker.Domain.Exceptions.Auth;
+using HabitTracker.Domain.Exceptions.User;
 using HabitTracker.Domain.Repository;
+using HabitTracker.Domain.Services;
 using HabitTracker.Infrastructure.Repository;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace HabitTracker.Application.Features.Auth.Commands.RefreshToken
 {
@@ -20,32 +20,50 @@ namespace HabitTracker.Application.Features.Auth.Commands.RefreshToken
     {
         private readonly IAuthRepository _authRepository;
         private readonly IConfiguration _configuration;
+        private readonly IUserContext _userContext;
+        private readonly ILogger<RefreshTokenCommandHandler> _logger;
         private readonly IUserRepository _userRepository;
 
-        public RefreshTokenCommandHandler(IAuthRepository authRepository, IUserRepository userRepositoy , IConfiguration configuration)
+        public RefreshTokenCommandHandler(IAuthRepository authRepository, IUserRepository userRepositoy ,
+                                        IConfiguration configuration, IUserContext userContext,
+                                        ILogger<RefreshTokenCommandHandler> logger)
         {
             _authRepository = authRepository;
             _configuration = configuration;
+            _userContext = userContext;
+            _logger = logger;
             _userRepository = userRepositoy;
         }
 
         public async Task<TokenResponseViewModel?> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Refreshing token for user ID {UserId}", request.UserId);
+
             var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
             if (user == null)
-                return null;
+            {
+                _logger.LogWarning("Invalid refresh token for user ID {UserId}", request.UserId);
+                throw new InvalidRefreshTokenException();
+            }
 
+            _logger.LogInformation("Successfully refreshed token for user ID {UserId}", request.UserId);
             return await CreateTokenResponse(user);
         }
 
         private async Task<User?> ValidateRefreshTokenAsync(int userId, string refreshToken)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
-            if (user == null || user.RefreshToken != refreshToken
-                || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            if (user == null)
             {
-                return null;
+                _logger.LogWarning("User ID {UserId} not found", userId);
+                throw new UserNotFoundException(userId);
             }
+
+            if (user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            {
+                return null; // Will be replaced by throw InvalidRefreshTokenException in Handle
+            }
+
             return user;
         }
 

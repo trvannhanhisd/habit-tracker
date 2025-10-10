@@ -1,9 +1,5 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace HabitTracker.Application.Features.Habits.Commands.CreateHabit
 {
@@ -11,8 +7,6 @@ namespace HabitTracker.Application.Features.Habits.Commands.CreateHabit
     {
         public CreateHabitCommandValidator()
         {
-            RuleFor(v => v.UserId)
-                .NotEmpty().WithMessage("UserId is required.");
 
             RuleFor(v => v.Title)
                 .NotEmpty().WithMessage("Title is required.")

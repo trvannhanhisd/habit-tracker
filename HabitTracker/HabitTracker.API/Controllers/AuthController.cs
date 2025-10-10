@@ -1,7 +1,9 @@
-﻿using HabitTracker.Application.Features.Auth.Commands.Login;
+﻿using HabitTracker.API.Models;
+using HabitTracker.Application.Features.Auth.Commands.Login;
 using HabitTracker.Application.Features.Auth.Commands.RefreshToken;
 using HabitTracker.Application.Features.Auth.Commands.Register;
 using HabitTracker.Application.Features.Habits.Queries.GetHabitById;
+using HabitTracker.Application.Features.Habits.Queries.GetHabits;
 using HabitTracker.Domain.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -13,37 +15,43 @@ namespace HabitTracker.API.Controllers
     [ApiController]
     public class AuthController : ApiControllerBase
     {
+        private readonly ILogger<AuthController> _logger;
+
+        public AuthController(ILogger<AuthController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpPost("register")]
         public async Task<ActionResult<UserViewModel>> Register(RegisterCommand command)
         {
+            _logger.LogInformation("Registering user {UserName}", command.UserName);
             var registeredUser = await Mediator.Send(command);
-            if (registeredUser == null)
-            {
-                return BadRequest("User registration failed.");
-            }
-            return Ok(registeredUser);
 
+            var response = new ApiResponse<UserViewModel>(registeredUser, 201);
+            return CreatedAtAction(
+                actionName: nameof(UserController.GetUserById),
+                controllerName: "User",
+                routeValues: new { userId = registeredUser.Id },
+                value: response);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<TokenResponseViewModel>> Login(LoginCommand command)
         {
-            var result = await Mediator.Send(command);
-            if (result is null)
-            {
-                return Unauthorized("Invalid username or password.");
-            }
-            return Ok(result);
+            _logger.LogInformation("Login attempt for user {UserName}", command.UserName);
+            var tokenResponse = await Mediator.Send(command);
+            var response = new ApiResponse<TokenResponseViewModel>(tokenResponse);
+            return Ok(response);
         }
 
         [HttpPost("refresh-token")]
         public async Task<ActionResult<TokenResponseViewModel>> RefreshToken(RefreshTokenCommand command)
         {
-            var result = await Mediator.Send(command);
-            if (result is null || result.AccessToken is null || result.RefreshToken is null)
-                return Unauthorized("Invalid refresh token.");
-
-            return Ok(result);
+            
+            var tokenResponse = await Mediator.Send(command);
+            var response = new ApiResponse<TokenResponseViewModel>(tokenResponse);
+            return Ok(response);
         }
 
 

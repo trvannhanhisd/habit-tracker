@@ -18,7 +18,7 @@ namespace HabitTracker.Application.Features.Habits.Commands.DeleteHabit
         }
         public async Task<int> Handle(DeleteHabitCommand request, CancellationToken cancellationToken)
         {
-            return await _habitRepository.DeleteAsync(request.Id);
+            return await _habitRepository.DeleteHabitAsync(request.HabitId);
         }
     }
 }

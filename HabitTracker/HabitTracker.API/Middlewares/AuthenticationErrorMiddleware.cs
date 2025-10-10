@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using HabitTracker.API.Models;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Text.Json;
 
@@ -43,14 +44,9 @@ namespace HabitTracker.API.Middlewares
             context.Response.StatusCode = (int)statusCode;
             context.Response.ContentType = "application/json";
 
-            var errorResponse = new
-            {
-                Status = (int)statusCode,
-                Error = message,
-                Timestamp = DateTime.UtcNow
-            };
+            var response = new ApiResponse<object>((int)statusCode, message);
 
-            await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
         }
     }
 

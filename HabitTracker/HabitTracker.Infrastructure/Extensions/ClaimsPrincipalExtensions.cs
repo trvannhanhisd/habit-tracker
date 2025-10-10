@@ -1,12 +1,17 @@
-﻿using System.Security.Claims;
+﻿using HabitTracker.Domain.Exceptions.Auth;
+using System.Security.Claims;
 
-namespace HabitTracker.API.Extensions
+namespace HabitTracker.Infrastructure.Extensions
 {
     public static class ClaimsPrincipalExtensions
     {
         public static int GetUserId(this ClaimsPrincipal user)
         {
             var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new MissingTokenException();
+            }
             return string.IsNullOrEmpty(userId) ? 0 : int.Parse(userId);
         }
 
@@ -17,7 +22,15 @@ namespace HabitTracker.API.Extensions
 
         public static string GetUserRole(this ClaimsPrincipal user)
         {
-            return user.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+            var role = user.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+
+            if (string.IsNullOrEmpty(role))
+            {
+                throw new MissingTokenException();
+            }
+
+            return role;
+
         }
     }
 }

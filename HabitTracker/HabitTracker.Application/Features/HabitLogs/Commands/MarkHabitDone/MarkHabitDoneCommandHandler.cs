@@ -1,0 +1,65 @@
+﻿using AutoMapper;
+using HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogs;
+using HabitTracker.Domain.Entity;
+using HabitTracker.Domain.Exceptions;
+using HabitTracker.Domain.Exceptions.Habit;
+using HabitTracker.Domain.Exceptions.HabitLog;
+using HabitTracker.Domain.Repository;
+using HabitTracker.Domain.Services;
+using MediatR;
+using Microsoft.Extensions.Logging;
+
+
+namespace HabitTracker.Application.Features.HabitLogs.Commands.MarkHabitDone
+{
+    public class MarkHabitDoneCommandHandler : IRequestHandler<MarkHabitDoneCommand, HabitLogViewModel>
+    {
+        private readonly IHabitLogRepository _habitLogRepository;
+        private readonly IHabitRepository _habitRepository;
+        private readonly IMapper _mapper;
+        private readonly IUserContext _userContext;
+        private readonly ILogger<MarkHabitDoneCommandHandler> _logger;
+
+        public MarkHabitDoneCommandHandler(IHabitLogRepository habitLogRepository, IHabitRepository habitRepository, 
+                                            IMapper mapper, IUserContext userContext,
+                                            ILogger<MarkHabitDoneCommandHandler> logger)
+        {
+            _habitLogRepository = habitLogRepository;
+            _habitRepository = habitRepository;
+            _mapper = mapper;
+            _userContext = userContext;
+            _logger = logger;
+        }
+
+        public async Task<HabitLogViewModel> Handle(MarkHabitDoneCommand request, CancellationToken cancellationToken)
+        {
+            var userId = _userContext.GetUserId();
+            if (userId == 0)
+            {
+                _logger.LogWarning("User not authenticated for marking habit {HabitId} on {Date}", request.HabitId, request.Date);
+                throw new UnauthorizedHabitAccessException("User not authenticated.");
+            }
+
+            _logger.LogInformation("Marking habit {HabitId} as done for user {UserId} on {Date}", request.HabitId, userId, request.Date);
+
+            // Kiểm tra Habit thuộc về người dùng
+            var habit = await _habitRepository.GetHabitByUserIdAsync(userId, request.HabitId);
+            if (habit == null)
+            {
+                _logger.LogWarning("Habit {HabitId} not found or does not belong to user {UserId}", request.HabitId, userId);
+                throw new HabitNotFoundException($"Habit with ID {request.HabitId} not found or does not belong to user {userId}.");
+            }
+
+            var existingHabitLog = await _habitLogRepository.GetHabitLogByHabitIdAndDateAsync(request.HabitId, request.Date);
+            if (existingHabitLog != null)
+            {
+                _logger.LogWarning("Habit log for Habit ID {HabitId} on {Date} already exists", request.HabitId, request.Date);
+                throw new HabitLogAlreadyExistsException($"Habit log for Habit ID {request.HabitId} on {request.Date:yyyy-MM-dd} already exists.");
+            }
+
+            var habitLog = new HabitLog { HabitId = request.HabitId, Date = request.Date.Date, IsCompleted = true };
+            var result = await _habitLogRepository.CreateHabitLogAsync(habitLog);
+            return _mapper.Map<HabitLogViewModel>(result);
+        }
+    }
+}

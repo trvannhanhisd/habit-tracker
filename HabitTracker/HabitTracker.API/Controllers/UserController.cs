@@ -1,9 +1,13 @@
-﻿using HabitTracker.Application.Features.Habits.Commands.UpdateHabit;
+﻿using HabitTracker.API.Models;
+using HabitTracker.Application.Features.Auth.Commands.Login;
+using HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogs;
+using HabitTracker.Application.Features.Habits.Commands.UpdateHabit;
 using HabitTracker.Application.Features.Habits.Queries.GetHabitById;
 using HabitTracker.Application.Features.Habits.Queries.GetHabits;
 using HabitTracker.Application.Features.Users.Commands.UpdateUser;
 using HabitTracker.Application.Features.Users.Queries.GetUserById;
 using HabitTracker.Application.Features.Users.Queries.GetUsers;
+using HabitTracker.Domain.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +29,8 @@ namespace HabitTracker.API.Controllers
         {
             _logger.LogInformation("Getting all users at {time}", DateTime.Now);
             var users = await Mediator.Send(new GetUsersQuery());
-            return Ok(users);
+            var response = new ApiResponse<List<UserViewModel>>(users);
+            return Ok(response);
         }
 
         [HttpGet("{userId}")]
@@ -37,7 +42,8 @@ namespace HabitTracker.API.Controllers
             {
                 return NotFound($"User with ID {userId} not found.");
             }
-            return Ok(user);
+            var response = new ApiResponse<UserViewModel>(user);
+            return Ok(response);
         }
 
         [HttpPut("{userId}")]

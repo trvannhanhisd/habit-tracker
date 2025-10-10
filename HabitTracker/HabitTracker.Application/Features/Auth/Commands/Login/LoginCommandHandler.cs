@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using HabitTracker.Application.Features.Habits.Queries.GetHabits;
 using HabitTracker.Domain.Entity;
+using HabitTracker.Domain.Exceptions.Auth;
+using HabitTracker.Domain.Exceptions.User;
 using HabitTracker.Domain.Repository;
 using HabitTracker.Infrastructure.Repository;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -23,23 +26,36 @@ namespace HabitTracker.Application.Features.Auth.Commands.Login
         private readonly IAuthRepository _authRepository;
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<LoginCommandHandler> _logger;
 
-        public LoginCommandHandler(IAuthRepository authRepository, IUserRepository userRepository, IConfiguration configuration)
+        public LoginCommandHandler(IAuthRepository authRepository, IUserRepository userRepository, 
+                                    IConfiguration configuration, ILogger<LoginCommandHandler> logger)
         {
             _authRepository = authRepository;
             _configuration = configuration;
+            _logger = logger;
             _userRepository = userRepository;
         }
 
         public async Task<TokenResponseViewModel?> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Login attempt for user {UserName}", request.UserName);
+
             var user = await _authRepository.LoginUserAsync(request.UserName);
-            if (user == null || new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password)
-                == PasswordVerificationResult.Failed)
+            if (user == null)
             {
-                return null;
+                _logger.LogWarning("User {UserName} not found", request.UserName);
+                throw new UserNotFoundException(request.UserName);
             }
 
+            if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password)
+                == PasswordVerificationResult.Failed)
+            {
+                _logger.LogWarning("Invalid password for user {UserName}", request.UserName);
+                throw new InvalidCredentialsException();
+            }
+
+            _logger.LogInformation("Successfully logged in user {UserName}", request.UserName);
             return await CreateTokenResponse(user);
         }
 
