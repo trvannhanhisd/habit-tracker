@@ -17,5 +17,6 @@ namespace HabitTracker.Domain.Repository
         Task<List<Habit>> GetAllHabitsByUserIdAsync(int userId);
         Task<int> ArchiveHabitAsync(int habitId);
         Task<Habit?> GetHabitByUserIdAsync(int userId, int habitId);
+        Task<List<Habit>> GetHabitsWithoutLogForDateAsync(DateTime date);
     }
 }

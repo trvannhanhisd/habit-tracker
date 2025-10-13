@@ -1,19 +1,19 @@
 ﻿using HabitTracker.API.Extensions;
 using HabitTracker.API.Middlewares;
 using HabitTracker.Application;
-using HabitTracker.Domain.Services;
 using HabitTracker.Infrastructure;
-using HabitTracker.Infrastructure.Data;
-using HabitTracker.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Hangfire;
+using Quartz;
+using HabitTracker.Infrastructure.Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
+// cấu hình Log
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information() 
     .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning) // ẩn log framework
@@ -30,8 +30,6 @@ builder.Services.AddApplicationServices();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 // Cấu hình Swagger
@@ -73,7 +71,30 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
+// Cấu hình Hangfire
+builder.Services.AddHangfire(config =>
+    config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHangfireServer();
+
+// Cấu hình Quartz
+builder.Services.AddQuartz(q =>
+{
+    var jobKey = new JobKey("ScheduleMissedHabitsJob");
+    q.AddJob<ScheduleMissedHabitsJob>(opts => opts.WithIdentity(jobKey));
+    q.AddTrigger(opts => opts.ForJob(jobKey)
+        .WithIdentity("ScheduleMissedHabitsJob-trigger")
+        .WithCronSchedule("0 31 10 * * ?"));
+});
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
 var app = builder.Build();
+
+
+// Hangfire Dashboard
+app.UseHangfireDashboard("/hangfire");
+
+// test route
+app.MapGet("/", () => "Habit Tracker Background Jobs Active");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

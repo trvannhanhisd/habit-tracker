@@ -11,3 +11,4 @@ namespace HabitTracker.Application.Common.DTO.HabitLog
         public DateTime Date { get; set; }
     }
 }
+ 

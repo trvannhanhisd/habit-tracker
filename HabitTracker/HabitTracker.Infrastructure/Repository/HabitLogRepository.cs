@@ -32,6 +32,8 @@ namespace HabitTracker.Infrastructure.Repository
                 .ToListAsync();
         }
 
+        
+
         public async Task<HabitLog?> GetHabitLogByHabitIdAndDateAsync(int habitId, DateTime date)
         {
             return await _context.HabitLogs

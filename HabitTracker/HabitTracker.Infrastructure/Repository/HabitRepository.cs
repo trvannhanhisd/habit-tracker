@@ -32,6 +32,13 @@ namespace HabitTracker.Infrastructure.Repository
                 .Where(h => h.UserId == userId)
                 .ToListAsync();
         }
+        public async Task<List<Habit>> GetHabitsWithoutLogForDateAsync(DateTime date)
+        {
+            return await _context.Habits
+                .Where(h => !_context.HabitLogs.Any(l => l.HabitId == h.Id && l.Date == date))
+                .ToListAsync();
+
+        }
 
         public async Task<Habit?> GetHabitByUserIdAsync(int userId, int habitId)
         {

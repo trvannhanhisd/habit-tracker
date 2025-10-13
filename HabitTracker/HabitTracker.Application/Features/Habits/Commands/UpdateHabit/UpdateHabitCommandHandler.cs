@@ -21,3 +21,4 @@ namespace HabitTracker.Application.Features.Habits.Commands.UpdateHabit
         }
     }
 }
+    
