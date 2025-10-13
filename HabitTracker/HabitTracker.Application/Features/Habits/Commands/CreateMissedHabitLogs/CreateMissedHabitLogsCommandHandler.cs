@@ -46,9 +46,10 @@ namespace HabitTracker.Application.Features.Habits.Commands.CreateMissedHabitLog
 
                 foreach (var habit in habits)
                 {
-                    var habitLog = new HabitLog() {HabitId = habit.Id, Date = today, IsCompleted = false};
-                    await _habitLogRepository.CreateHabitLogAsync(habitLog);
+                    habit.MarkAsMissed(today);
                 }
+
+                await _habitRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
                 _logger.LogInformation("Created {Count} HabitLog IsCompleted = false for {Date}", habits.Count, today);
 

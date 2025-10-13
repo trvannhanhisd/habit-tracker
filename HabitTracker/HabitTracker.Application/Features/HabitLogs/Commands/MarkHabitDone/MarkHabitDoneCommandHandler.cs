@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogs;
-using HabitTracker.Domain.Entity;
-using HabitTracker.Domain.Exceptions;
 using HabitTracker.Domain.Exceptions.Habit;
-using HabitTracker.Domain.Exceptions.HabitLog;
 using HabitTracker.Domain.Repository;
 using HabitTracker.Domain.Services;
 using MediatR;
@@ -50,16 +47,12 @@ namespace HabitTracker.Application.Features.HabitLogs.Commands.MarkHabitDone
                 throw new HabitNotFoundException($"Habit with ID {request.HabitId} not found or does not belong to user {userId}.");
             }
 
-            var existingHabitLog = await _habitLogRepository.GetHabitLogByHabitIdAndDateAsync(request.HabitId, request.Date);
-            if (existingHabitLog != null)
-            {
-                _logger.LogWarning("Habit log for Habit ID {HabitId} on {Date} already exists", request.HabitId, request.Date);
-                throw new HabitLogAlreadyExistsException($"Habit log for Habit ID {request.HabitId} on {request.Date:yyyy-MM-dd} already exists.");
-            }
+            habit.MarkAsCompleted(request.Date);
 
-            var habitLog = new HabitLog { HabitId = request.HabitId, Date = request.Date.Date, IsCompleted = true };
-            var result = await _habitLogRepository.CreateHabitLogAsync(habitLog);
-            return _mapper.Map<HabitLogViewModel>(result);
+            await _habitRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+
+            var log = habit.Logs.FirstOrDefault(l => l.Date.Date == request.Date.Date);
+            return _mapper.Map<HabitLogViewModel>(log);
         }
     }
 }

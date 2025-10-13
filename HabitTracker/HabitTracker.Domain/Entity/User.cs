@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HabitTracker.Domain.Entity
 {
@@ -13,7 +9,8 @@ namespace HabitTracker.Domain.Entity
         public string UserName { get; set; } = ""; 
         public string Email { get; set; } = "";
         public string PasswordHash { get; set; }
-        public UserRole Role { get; set; } = UserRole.User; 
+        public UserRole Role { get; set; } = UserRole.User;
+        public int StreakCount { get; set; } = 0;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool IsActive { get; set; } = true;
         [MaxLength(200)]

@@ -16,6 +16,8 @@ namespace HabitTracker.Infrastructure
             services.AddDbContext<HabitDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<HabitDbContext>());
+
             services.AddScoped<IHabitRepository, HabitRepository>();
             services.AddScoped<IHabitLogRepository, HabitLogRepository>();
             services.AddScoped<IAuthRepository, AuthRepository>();

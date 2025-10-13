@@ -1,4 +1,5 @@
 ﻿using HabitTracker.Domain.Entity;
+using HabitTracker.Domain.Repository;
 using HabitTracker.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,7 @@ namespace HabitTracker.Infrastructure.Repository
     public class UserRepository : IUserRepository
     {
         private readonly HabitDbContext _context;
-
+        public IUnitOfWork UnitOfWork => _context;
         public UserRepository(HabitDbContext context)
         {
             _context = context;

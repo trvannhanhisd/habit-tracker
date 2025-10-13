@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HabitTracker.Domain.Common;
+using HabitTracker.Domain.Events;
+
 
 namespace HabitTracker.Domain.Entity
 {
-    public class Habit
+    public class Habit : EntityBase
     {
         public int Id { get; set; }              // Primary key
         public int UserId { get; set; }          // FK tới User
@@ -18,5 +16,34 @@ namespace HabitTracker.Domain.Entity
 
         public User? User { get; set; }
         public List<HabitLog> Logs { get; set; } = new List<HabitLog>();
+
+
+        public void MarkAsCompleted(DateTime date)
+        {
+            if (Logs.Any(l => l.Date.Date == date.Date))
+                return;
+
+            Logs.Add(new HabitLog
+            {
+                Date = date,
+                IsCompleted = true
+            });
+
+            AddDomainEvent(new HabitCompletedEvent(UserId, Id));
+        }
+
+        public void MarkAsMissed(DateTime date)
+        {
+            if (Logs.Any(l => l.Date.Date == date.Date))
+                return;
+
+            Logs.Add(new HabitLog
+            {
+                Date = date,
+                IsCompleted = false
+            });
+
+            AddDomainEvent(new HabitMissedEvent(UserId, Id));
+        }
     }
 }

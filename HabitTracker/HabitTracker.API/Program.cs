@@ -9,6 +9,8 @@ using System.Text.Json;
 using Hangfire;
 using Quartz;
 using HabitTracker.Infrastructure.Quartz;
+using HabitTracker.Application.DomainEventHandler;
+using HabitTracker.Application.Features.HabitLogs.Commands.MarkHabitDone;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,9 +85,10 @@ builder.Services.AddQuartz(q =>
     q.AddJob<ScheduleMissedHabitsJob>(opts => opts.WithIdentity(jobKey));
     q.AddTrigger(opts => opts.ForJob(jobKey)
         .WithIdentity("ScheduleMissedHabitsJob-trigger")
-        .WithCronSchedule("0 31 10 * * ?"));
+        .WithCronSchedule("0 14 15 * * ?"));
 });
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
 
 var app = builder.Build();
 

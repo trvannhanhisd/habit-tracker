@@ -11,17 +11,19 @@ namespace HabitTracker.Infrastructure.Repository
     {
         private readonly HabitDbContext _context;
 
+        public IUnitOfWork UnitOfWork => _context;
+
         public HabitRepository(HabitDbContext context)
         {
             _context = context;
         }
 
-        public async Task<Habit?> GetHabitByIdAsync(int habitId) 
+        public async Task<Habit?> GetHabitByIdAsync(int habitId)
         {
             return await _context.Habits.FindAsync(habitId);
         }
 
-        public async Task<List<Habit>> GetAllHabitAsync() 
+        public async Task<List<Habit>> GetAllHabitAsync()
         {
             return await _context.Habits.ToListAsync();
         }
@@ -32,57 +34,49 @@ namespace HabitTracker.Infrastructure.Repository
                 .Where(h => h.UserId == userId)
                 .ToListAsync();
         }
+
         public async Task<List<Habit>> GetHabitsWithoutLogForDateAsync(DateTime date)
         {
             return await _context.Habits
                 .Where(h => !_context.HabitLogs.Any(l => l.HabitId == h.Id && l.Date == date))
                 .ToListAsync();
-
         }
 
         public async Task<Habit?> GetHabitByUserIdAsync(int userId, int habitId)
         {
             return await _context.Habits
-                .Where(h => h.UserId == userId)
-                .FirstOrDefaultAsync();
+                .Include(h => h.Logs)
+                .FirstOrDefaultAsync(h => h.Id == habitId && h.UserId == userId);
         }
 
-        public async Task<Habit> CreateHabitAsync(Habit habit)
+        public Task<Habit> CreateHabitAsync(Habit habit)
         {
             _context.Habits.Add(habit);
-            await _context.SaveChangesAsync();
-            return habit;
+            return Task.FromResult(habit);
         }
 
-        public async Task<int> UpdateHabitAsync(Habit habit)
+        public Task UpdateHabitAsync(Habit habit)
         {
             _context.Habits.Update(habit);
-            return await _context.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
-        public async Task<int> ArchiveHabitAsync(int habitId)
+        public async Task ArchiveHabitAsync(int habitId)
         {
-            var habit =  await _context.Habits.FindAsync(habitId);
-
+            var habit = await _context.Habits.FindAsync(habitId);
             if (habit != null)
             {
                 habit.IsArchived = true;
             }
-            
-            return await _context.SaveChangesAsync();
         }
 
-        public async Task<int> DeleteHabitAsync(int id)
+        public async Task DeleteHabitAsync(int id)
         {
             var habit = await GetHabitByIdAsync(id);
             if (habit != null)
             {
                 _context.Habits.Remove(habit);
-                return await _context.SaveChangesAsync();
             }
-            return 0;
         }
-
-
     }
 }
