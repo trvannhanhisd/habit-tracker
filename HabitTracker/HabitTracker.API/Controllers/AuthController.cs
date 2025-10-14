@@ -2,15 +2,11 @@
 using HabitTracker.Application.Features.Auth.Commands.Login;
 using HabitTracker.Application.Features.Auth.Commands.RefreshToken;
 using HabitTracker.Application.Features.Auth.Commands.Register;
-using HabitTracker.Application.Features.Habits.Queries.GetHabitById;
-using HabitTracker.Application.Features.Habits.Queries.GetHabits;
-using HabitTracker.Domain.Entity;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HabitTracker.API.Controllers
 {
+    [ApiVersion("1.0")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ApiControllerBase

@@ -106,6 +106,7 @@ namespace HabitTracker.API.Middlewares
                     response = new ApiResponse<object>(400, ve.Message);
                     break;
 
+
                 default:
                     _logger.LogError(ex, "Unhandled exception for request: {Path}", context.Request.Path);
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

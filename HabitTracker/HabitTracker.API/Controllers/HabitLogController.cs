@@ -1,14 +1,14 @@
-﻿
-
+﻿using HabitTracker.API.Examples.ViewModel;
 using HabitTracker.API.Models;
 using HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogById;
 using HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogs;
-using HabitTracker.Domain.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace HabitTracker.API.Controllers
 {
+    [ApiVersion("1.0")]
     [Route("api/[controller]")]
     [ApiController]
     public class HabitLogController : ApiControllerBase
@@ -23,6 +23,7 @@ namespace HabitTracker.API.Controllers
 
         [Authorize]
         [HttpGet("{habitLogId}")]
+        [SwaggerResponseExample(StatusCodes.Status200OK, typeof(HabitLogViewModelExample))]
         public async Task<IActionResult> GetHabitLogById(int habitLogId)
         {
             _logger.LogInformation("Getting habit log at {time}", DateTime.Now);
