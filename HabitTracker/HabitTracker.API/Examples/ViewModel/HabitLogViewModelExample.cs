@@ -1,5 +1,5 @@
 ﻿using HabitTracker.API.Models;
-using HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogs;
+using HabitTracker.Application.Common.ViewModels;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace HabitTracker.API.Examples.ViewModel
