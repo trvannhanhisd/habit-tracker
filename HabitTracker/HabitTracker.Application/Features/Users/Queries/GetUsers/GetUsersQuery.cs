@@ -1,4 +1,4 @@
-﻿using HabitTracker.Application.Features.Auth.Commands.Login;
+﻿using HabitTracker.Application.Common.ViewModels;
 using MediatR;
 
 

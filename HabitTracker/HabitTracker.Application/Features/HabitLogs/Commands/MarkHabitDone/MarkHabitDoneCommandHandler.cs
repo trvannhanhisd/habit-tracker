@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogs;
+using HabitTracker.Application.Common.ViewModels;
 using HabitTracker.Domain.Exceptions.Habit;
 using HabitTracker.Domain.Repository;
 using HabitTracker.Domain.Services;

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using HabitTracker.Application.Features.Habits.Queries.GetHabits;
+using HabitTracker.Application.Common.ViewModels;
 using HabitTracker.Domain.Repository;
 using HabitTracker.Domain.Services;
 using MediatR;

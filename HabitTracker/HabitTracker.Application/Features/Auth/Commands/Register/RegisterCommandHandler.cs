@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using HabitTracker.Application.Features.Auth.Commands.Login;
+using HabitTracker.Application.Common.ViewModels;
 using HabitTracker.Domain.Entity;
 using HabitTracker.Domain.Exceptions.Auth;
 using HabitTracker.Domain.Repository;

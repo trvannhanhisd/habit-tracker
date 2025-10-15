@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using HabitTracker.Application.Common.ViewModels;
+using MediatR;
 
 namespace HabitTracker.Application.Features.Habits.Queries.GetHabits
 {

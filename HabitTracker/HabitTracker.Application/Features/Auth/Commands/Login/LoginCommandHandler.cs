@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using HabitTracker.Application.Features.Habits.Queries.GetHabits;
+﻿
+using HabitTracker.Application.Common.ViewModels;
 using HabitTracker.Domain.Entity;
 using HabitTracker.Domain.Exceptions.Auth;
 using HabitTracker.Domain.Exceptions.User;
@@ -17,7 +17,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace HabitTracker.Application.Features.Auth.Commands.Login
 {

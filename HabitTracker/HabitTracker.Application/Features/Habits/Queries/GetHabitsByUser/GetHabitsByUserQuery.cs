@@ -1,4 +1,4 @@
-﻿using HabitTracker.Application.Features.Habits.Queries.GetHabits;
+﻿using HabitTracker.Application.Common.ViewModels;
 using MediatR;
 
 

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using HabitTracker.Application.Features.Habits.Queries.GetHabits;
-using HabitTracker.Domain.Entity;
+using HabitTracker.Application.Common.ViewModels;
 using HabitTracker.Domain.Repository;
 using MediatR;
 using Microsoft.Extensions.Logging;

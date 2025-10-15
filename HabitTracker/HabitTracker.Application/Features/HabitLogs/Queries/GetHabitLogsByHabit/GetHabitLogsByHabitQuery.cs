@@ -1,9 +1,6 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HabitTracker.Application.Common.ViewModels;
+using MediatR;
+
 
 namespace HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogs
 {
