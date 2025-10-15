@@ -15,6 +15,9 @@ using HabitTracker.API.Configurations;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.AspNetCore.Mvc.Versioning;
 
+var isTesting = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing";
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -30,7 +33,11 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-builder.Services.AddInfrastructureServices(builder.Configuration);
+if (!isTesting)
+{
+    builder.Services.AddInfrastructureServices(builder.Configuration);
+}
+
 builder.Services.AddApplicationServices();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddControllers();
@@ -99,11 +106,11 @@ builder.Services.AddApiVersioning(options =>
     options.AssumeDefaultVersionWhenUnspecified = true; 
     options.ReportApiVersions = true;
     // Cấu hình hỗ trợ nhiều chiến lược Versioning (URL, query paraeter, header)
-    options.ApiVersionReader = ApiVersionReader.Combine(
-        new UrlSegmentApiVersionReader(), // ví dụ: /api/v1/Habit
-        new QueryStringApiVersionReader("api-version"), // ví dụ: /api/Habit?api-version=1.0
-        new HeaderApiVersionReader("X-Api-Version") // ví dụ: X-Api-Version: 1.0
-    );
+    //options.ApiVersionReader = ApiVersionReader.Combine(
+    //    new UrlSegmentApiVersionReader(), // ví dụ: /api/v1/Habit
+    //    new QueryStringApiVersionReader("api-version"), // ví dụ: /api/Habit?api-version=1.0
+    //    new HeaderApiVersionReader("X-Api-Version") // ví dụ: X-Api-Version: 1.0
+    //);
 });
 
 builder.Services.AddVersionedApiExplorer(options =>
@@ -162,3 +169,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

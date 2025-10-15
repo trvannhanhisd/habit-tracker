@@ -7,6 +7,9 @@
         public string? Error { get; set; }
         public DateTime Timestamp { get; set; }
 
+
+        public ApiResponse() { }
+
         // Constructor cho response thành công
         public ApiResponse(T? data, int status = 200)
         {

@@ -1,7 +1,5 @@
 ﻿using HabitTracker.API.Models;
-using HabitTracker.Application.Features.Auth.Commands.Login;
-using HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogs;
-using HabitTracker.Application.Features.Habits.Queries.GetHabits;
+using HabitTracker.Application.Common.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
