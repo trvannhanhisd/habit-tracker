@@ -1,7 +1,7 @@
 ﻿using HabitTracker.API.Examples.ViewModel;
 using HabitTracker.API.Models;
+using HabitTracker.Application.Common.ViewModels;
 using HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogById;
-using HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Filters;

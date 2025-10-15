@@ -1,7 +1,7 @@
 ﻿using HabitTracker.API.Examples.Command.User;
 using HabitTracker.API.Examples.ViewModel;
 using HabitTracker.API.Models;
-using HabitTracker.Application.Features.Auth.Commands.Login;
+using HabitTracker.Application.Common.ViewModels;
 using HabitTracker.Application.Features.Users.Commands.UpdateUser;
 using HabitTracker.Application.Features.Users.Queries.GetUserById;
 using HabitTracker.Application.Features.Users.Queries.GetUsers;

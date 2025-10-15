@@ -1,8 +1,8 @@
 ﻿using HabitTracker.API.Examples.Command.Habit;
 using HabitTracker.API.Examples.ViewModel;
 using HabitTracker.API.Models;
+using HabitTracker.Application.Common.ViewModels;
 using HabitTracker.Application.Features.HabitLogs.Commands.MarkHabitDone;
-using HabitTracker.Application.Features.HabitLogs.Queries.GetHabitLogs;
 using HabitTracker.Application.Features.Habits.Commands.ArchiveHabit;
 using HabitTracker.Application.Features.Habits.Commands.CreateHabit;
 using HabitTracker.Application.Features.Habits.Commands.DeleteHabit;
@@ -17,7 +17,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace HabitTracker.API.Controllers
 {
-    [ApiVersion("2.0")]
+    [ApiVersion("1.0")]
     [Route("api/[controller]")]
     [ApiController]
     public class HabitController : ApiControllerBase
@@ -151,7 +151,7 @@ namespace HabitTracker.API.Controllers
         public async Task<IActionResult> DeleteHabit(int habitId)
         {
             _logger.LogInformation("Deleting habit {HabitId} at {Time}", habitId, DateTime.UtcNow);
-            await Mediator.Send(new DeleteHabitCommand { HabitId = habitId });
+            await Mediator.Send(new DeleteHabitCommand(habitId));
             return Ok(new ApiResponse<object>(null, 204));
         }
     }
