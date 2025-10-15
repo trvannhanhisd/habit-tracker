@@ -13,7 +13,7 @@ namespace HabitTracker.Application.Features.Habits.Commands.UpdateHabit
         public int UserId { get; set; }
         public required string Title { get; set; }
         public string? Description { get; set; }
-        public required string Frequency { get; set; }
+        public string Frequency { get; set; } = "Daily";
         public bool IsArchived { get; set; }
     }
 }

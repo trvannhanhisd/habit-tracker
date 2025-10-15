@@ -7,8 +7,5 @@ using System.Threading.Tasks;
 
 namespace HabitTracker.Application.Features.Habits.Commands.DeleteHabit
 {
-    public class DeleteHabitCommand : IRequest<int>
-    {
-        public int HabitId { get; set; }
-    }
+    public record DeleteHabitCommand(int HabitId) : IRequest<int>;
 }

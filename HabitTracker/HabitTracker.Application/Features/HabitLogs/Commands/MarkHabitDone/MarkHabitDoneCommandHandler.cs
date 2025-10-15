@@ -6,7 +6,6 @@ using HabitTracker.Domain.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-
 namespace HabitTracker.Application.Features.HabitLogs.Commands.MarkHabitDone
 {
     public class MarkHabitDoneCommandHandler : IRequestHandler<MarkHabitDoneCommand, HabitLogViewModel>
@@ -17,9 +16,12 @@ namespace HabitTracker.Application.Features.HabitLogs.Commands.MarkHabitDone
         private readonly IUserContext _userContext;
         private readonly ILogger<MarkHabitDoneCommandHandler> _logger;
 
-        public MarkHabitDoneCommandHandler(IHabitLogRepository habitLogRepository, IHabitRepository habitRepository, 
-                                            IMapper mapper, IUserContext userContext,
-                                            ILogger<MarkHabitDoneCommandHandler> logger)
+        public MarkHabitDoneCommandHandler(
+            IHabitLogRepository habitLogRepository,
+            IHabitRepository habitRepository,
+            IMapper mapper,
+            IUserContext userContext,
+            ILogger<MarkHabitDoneCommandHandler> logger)
         {
             _habitLogRepository = habitLogRepository;
             _habitRepository = habitRepository;
@@ -39,19 +41,25 @@ namespace HabitTracker.Application.Features.HabitLogs.Commands.MarkHabitDone
 
             _logger.LogInformation("Marking habit {HabitId} as done for user {UserId} on {Date}", request.HabitId, userId, request.Date);
 
-            // Kiểm tra Habit thuộc về người dùng
             var habit = await _habitRepository.GetHabitByUserIdAsync(userId, request.HabitId);
             if (habit == null)
             {
-                _logger.LogWarning("Habit {HabitId} not found or does not belong to user {UserId}", request.HabitId, userId);
-                throw new HabitNotFoundException($"Habit with ID {request.HabitId} not found or does not belong to user {userId}.");
+                _logger.LogWarning("Habit {HabitId} not found for user {UserId}", request.HabitId, userId);
+                throw new HabitNotFoundException($"Habit with ID {request.HabitId} not found for user {userId}.");
             }
 
             habit.MarkAsCompleted(request.Date);
-
             await _habitRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
             var log = habit.Logs.FirstOrDefault(l => l.Date.Date == request.Date.Date);
+            if (log == null)
+            {
+                _logger.LogError("No habit log created for habit {HabitId} on {Date}", request.HabitId, request.Date);
+                throw new InvalidOperationException("HabitLog could not be created or retrieved.");
+            }
+
+            _logger.LogInformation("Habit {HabitId} marked as done successfully for user {UserId} on {Date}", request.HabitId, userId, request.Date);
+
             return _mapper.Map<HabitLogViewModel>(log);
         }
     }

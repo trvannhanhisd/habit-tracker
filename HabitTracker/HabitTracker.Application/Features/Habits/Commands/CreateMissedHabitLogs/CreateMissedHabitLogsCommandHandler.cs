@@ -9,7 +9,6 @@ namespace HabitTracker.Application.Features.Habits.Commands.CreateMissedHabitLog
 {
     public class CreateMissedHabitLogsCommandHandler : IRequestHandler<CreateMissedHabitLogsCommand, Unit>
     {
-
         private readonly IHabitRepository _habitRepository;
         private readonly IHabitLogRepository _habitLogRepository;
         private readonly IMapper _mapper;
@@ -36,11 +35,13 @@ namespace HabitTracker.Application.Features.Habits.Commands.CreateMissedHabitLog
             {
                 var today = DateTime.Today;
 
+                _logger.LogInformation("Checking missed habits for date {Date}", today);
+
                 var habits = await _habitRepository.GetHabitsWithoutLogForDateAsync(today);
 
-                if (!habits.Any())
+                if (habits == null || !habits.Any())
                 {
-                    _logger.LogInformation("Dont have any missed habit today ({Date})", today);
+                    _logger.LogInformation("No missed habits found for {Date}", today);
                     return Unit.Value;
                 }
 
@@ -51,16 +52,14 @@ namespace HabitTracker.Application.Features.Habits.Commands.CreateMissedHabitLog
 
                 await _habitRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
-                _logger.LogInformation("Created {Count} HabitLog IsCompleted = false for {Date}", habits.Count, today);
-
+                _logger.LogInformation("Created {Count} missed HabitLogs for {Date}", habits.Count, today);
                 return Unit.Value;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error when creating Missed HabitLog");
+                _logger.LogError(ex, "Error when creating missed habit logs");
                 throw;
             }
         }
-
     }
 }
