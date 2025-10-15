@@ -33,85 +33,37 @@ namespace HabitTracker.API.Middlewares
             }
         }
 
+        private static readonly Dictionary<Type, (int StatusCode, string DefaultMessage)> ExceptionMap = new()
+{
+            { typeof(HabitNotFoundException), (404, "Habit not found.") },
+            { typeof(HabitLogAlreadyExistsException), (409, "Habit log already exists.") },
+            { typeof(UnauthorizedHabitAccessException), (403, "Unauthorized access to habit.") },
+            { typeof(UsernameAlreadyExistsException), (400, "Username already exists.") },
+            { typeof(EmailAlreadyExistsException), (400, "Email already exists.") },
+            { typeof(InvalidCredentialsException), (401, "Invalid username or password.") },
+            { typeof(InvalidRefreshTokenException), (401, "Invalid or expired refresh token.") },
+            { typeof(UserNotFoundException), (404, "User not found.") },
+            { typeof(InvalidTokenException), (401, "Invalid token.") },
+            { typeof(MissingTokenException), (401, "Missing token.") },
+            { typeof(ValidationException), (400, "Validation error.") }
+        };
+
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             context.Response.ContentType = "application/json";
             var response = new ApiResponse<object>(500, "An unexpected error occurred.");
 
-            switch (ex)
+            _logger.LogWarning(ex, "Exception occurred for request: {Path}", context.Request.Path);
+
+            if (ExceptionMap.TryGetValue(ex.GetType(), out var errorDetails))
             {
-                case HabitNotFoundException hnf:
-                    _logger.LogWarning(ex, "Habit not found for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    response = new ApiResponse<object>(404, hnf.Message);
-                    break;
-
-                case HabitLogAlreadyExistsException hlae:
-                    _logger.LogWarning(ex, "Habit log already exists for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.Conflict;
-                    response = new ApiResponse<object>(409, hlae.Message);
-                    break;
-
-                case UnauthorizedHabitAccessException uha:
-                    _logger.LogWarning(ex, "Unauthorized habit access for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    response = new ApiResponse<object>(403, uha.Message);
-                    break;
-
-                case UsernameAlreadyExistsException uae:
-                    _logger.LogWarning(ex, "Username already exists for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    response = new ApiResponse<object>(400, uae.Message);
-                    break;
-
-                case EmailAlreadyExistsException eae:
-                    _logger.LogWarning(ex, "Email already exists for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    response = new ApiResponse<object>(400, eae.Message);
-                    break;
-
-                case InvalidCredentialsException ice:
-                    _logger.LogWarning(ex, "Invalid credentials for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    response = new ApiResponse<object>(401, ice.Message);
-                    break;
-
-                case InvalidRefreshTokenException irt:
-                    _logger.LogWarning(ex, "Invalid refresh token for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    response = new ApiResponse<object>(401, irt.Message);
-                    break;
-
-                case UserNotFoundException unf:
-                    _logger.LogWarning(ex, "User not found for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    response = new ApiResponse<object>(404, unf.Message);
-                    break;
-
-                case InvalidTokenException it:
-                    _logger.LogWarning(ex, "Invalid Token for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    response = new ApiResponse<object>(401, it.Message);
-                    break;
-
-                case MissingTokenException mt:
-                    _logger.LogWarning(ex, "Missing Token for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    response = new ApiResponse<object>(401, mt.Message);
-                    break;
-
-                case ValidationException ve:
-                    _logger.LogWarning(ex, "Validation error for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    response = new ApiResponse<object>(400, ve.Message);
-                    break;
-
-
-                default:
-                    _logger.LogError(ex, "Unhandled exception for request: {Path}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    response = new ApiResponse<object>(500, "An unexpected error occurred.");
-                    break;
+                context.Response.StatusCode = errorDetails.StatusCode;
+                response = new ApiResponse<object>(errorDetails.StatusCode, ex.Message ?? errorDetails.DefaultMessage);
+            }
+            else
+            {
+                _logger.LogError(ex, "Unhandled exception for request: {Path}", context.Request.Path);
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             }
 
             await context.Response.WriteAsync(JsonSerializer.Serialize(response));
