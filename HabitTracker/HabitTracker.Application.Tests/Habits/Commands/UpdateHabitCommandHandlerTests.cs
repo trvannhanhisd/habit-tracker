@@ -48,7 +48,7 @@ namespace HabitTracker.Application.Tests.Habits.Commands
                 Id = 1,
                 Title = "Updated Habit",
                 Description = "Updated desc",
-                Frequency = "Weekly"
+                Frequency = Habit.HabitFrequency.Weekly,
             };
 
             var existingHabit = new Habit
@@ -56,7 +56,7 @@ namespace HabitTracker.Application.Tests.Habits.Commands
                 Id = 1,
                 Title = "Old Habit",
                 Description = "Old desc",
-                Frequency = "Daily",
+                Frequency = Habit.HabitFrequency.Daily,
                 UserId = 1
             };
 
@@ -83,7 +83,7 @@ namespace HabitTracker.Application.Tests.Habits.Commands
             {
                 Id = 99,
                 Title = "Nonexistent Habit",
-                Frequency = "Daily"
+                Frequency = Habit.HabitFrequency.Daily,
             };
 
             _habitRepositoryMock.Setup(r => r.GetHabitByIdAsync(99))
@@ -105,7 +105,7 @@ namespace HabitTracker.Application.Tests.Habits.Commands
             {
                 Id = 1,
                 Title = "",
-                Frequency = "Daily"
+                Frequency = Habit.HabitFrequency.Daily,
             };
 
             // ACT
@@ -116,24 +116,7 @@ namespace HabitTracker.Application.Tests.Habits.Commands
                 .WithMessage("*Title cannot be empty*");
         }
 
-        [Fact]
-        public async Task Handle_ShouldThrowException_WhenFrequencyIsEmpty()
-        {
-            // ARRANGE
-            var command = new UpdateHabitCommand
-            {
-                Id = 1,
-                Title = "Drink water",
-                Frequency = ""
-            };
-
-            // ACT
-            Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
-
-            // ASSERT
-            await act.Should().ThrowAsync<ArgumentException>()
-                .WithMessage("*Frequency cannot be empty*");
-        }
+        
 
         [Fact]
         public async Task Handle_ShouldThrowInvalidTokenException_WhenUserIdIsInvalid()
@@ -152,7 +135,7 @@ namespace HabitTracker.Application.Tests.Habits.Commands
             {
                 Id = 1,
                 Title = "Test Habit",
-                Frequency = "Weekly"
+                Frequency = Habit.HabitFrequency.Weekly,
             };
 
             // ACT
@@ -171,7 +154,7 @@ namespace HabitTracker.Application.Tests.Habits.Commands
             {
                 Id = 2,
                 Title = "Hack Attempt",
-                Frequency = "Monthly"
+                Frequency = Habit.HabitFrequency.Monthly,
             };
 
             var habit = new Habit { Id = 2, UserId = 999 };
@@ -195,7 +178,7 @@ namespace HabitTracker.Application.Tests.Habits.Commands
             {
                 Id = 1,
                 Title = "Throw me",
-                Frequency = "Daily"
+                Frequency = Habit.HabitFrequency.Daily,
             };
 
             var habit = new Habit { Id = 1, UserId = 1 };

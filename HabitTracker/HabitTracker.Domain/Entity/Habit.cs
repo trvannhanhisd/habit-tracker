@@ -10,7 +10,9 @@ namespace HabitTracker.Domain.Entity
         public int UserId { get; set; }          // FK tới User
         public string Title { get; set; } = "";   // Tên thói quen
         public string? Description { get; set; }  // Mô tả
-        public string Frequency { get; set; } = "Daily"; // "Daily", "Weekly", etc.
+        public HabitFrequency Frequency { get; set; } = HabitFrequency.Daily;
+        public HabitCategory Category { get; set; } = HabitCategory.General;
+        public int CurrentStreak { get; set; } = 0;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool IsArchived { get; set; } = false; // Nếu user muốn tạm dừng habit
 
@@ -44,6 +46,28 @@ namespace HabitTracker.Domain.Entity
             });
 
             AddDomainEvent(new HabitMissedEvent(UserId, Id));
+        }
+
+
+        public enum HabitCategory
+        {
+            General,
+            Health,
+            Fitness,
+            Study,
+            Work,
+            Finance,
+            SelfGrowth,
+            Social,
+            Creative,
+            Environment
+        }
+
+        public enum HabitFrequency
+        {
+            Daily,
+            Weekly,
+            Monthly
         }
     }
 }

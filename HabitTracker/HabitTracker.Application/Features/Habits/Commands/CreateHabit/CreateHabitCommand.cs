@@ -1,5 +1,6 @@
 ﻿using HabitTracker.Application.Common.ViewModels;
 using MediatR;
+using static HabitTracker.Domain.Entity.Habit;
 
 
 namespace HabitTracker.Application.Features.Habits.Commands.CreateHabit
@@ -10,6 +11,7 @@ namespace HabitTracker.Application.Features.Habits.Commands.CreateHabit
         //[SwaggerSchema(Description = "Tên của thói quen", Example = "Read a Book 📚")] , cách schemea example bằng cách dùng attribute
         public string Title { get; set; } = "";   // Tên thói quen
         public string? Description { get; set; }  // Mô tả
-        public string Frequency { get; set; } = "Daily"; // "Daily", "Weekly", etc.
+        public HabitFrequency Frequency { get; set; }
+        public HabitCategory Category { get; set; }
     }
 }

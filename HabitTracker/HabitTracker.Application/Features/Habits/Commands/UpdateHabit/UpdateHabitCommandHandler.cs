@@ -37,8 +37,6 @@ namespace HabitTracker.Application.Features.Habits.Commands.UpdateHabit
             if (string.IsNullOrWhiteSpace(request.Title))
                 throw new ArgumentException("Title cannot be empty.");
 
-            if (string.IsNullOrWhiteSpace(request.Frequency))
-                throw new ArgumentException("Frequency cannot be empty.");
 
             try
             {
@@ -53,6 +51,7 @@ namespace HabitTracker.Application.Features.Habits.Commands.UpdateHabit
                 habit.Title = request.Title;
                 habit.Description = request.Description;
                 habit.Frequency = request.Frequency;
+                habit.Category = request.Category;
                 habit.IsArchived = request.IsArchived;
 
                 await _habitRepository.UpdateHabitAsync(habit);

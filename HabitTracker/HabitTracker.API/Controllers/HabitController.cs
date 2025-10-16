@@ -19,7 +19,7 @@ using Swashbuckle.AspNetCore.Filters;
 namespace HabitTracker.API.Controllers
 {
     [ApiVersion("1.0")]
-    [ApiVersion("2.0")]
+    //[ApiVersion("2.0")]
     [Route("v{version:apiVersion}/[controller]")]
     [ApiController]
     public class HabitController : ApiControllerBase
@@ -43,7 +43,7 @@ namespace HabitTracker.API.Controllers
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(ListHabitViewModelExample))]
         [ProducesResponseType(typeof(ApiResponse<List<HabitViewModel>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
-        [MapToApiVersion("1.0")]
+        //[MapToApiVersion("1.0")]
         public async Task<IActionResult> GetAllHabits()
         {
             _logger.LogInformation("Getting all habits at {time}", DateTime.Now);
@@ -53,15 +53,15 @@ namespace HabitTracker.API.Controllers
         }
 
 
-        [MapToApiVersion("2.0")]
-        [HttpGet]
-        public async Task<IActionResult> GetAllHabitsV2()
-        {
-            _logger.LogInformation("Getting all habits at {time}", DateTime.Now);
-            var habits = await Mediator.Send(new GetHabitQuery());
-            var response = new ApiResponse<List<HabitViewModel>>(habits);
-            return Ok(response);
-        }
+        //[MapToApiVersion("2.0")]
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllHabitsV2()
+        //{
+        //    _logger.LogInformation("Getting all habits at {time}", DateTime.Now);
+        //    var habits = await Mediator.Send(new GetHabitQuery());
+        //    var response = new ApiResponse<List<HabitViewModel>>(habits);
+        //    return Ok(response);
+        //}
 
 
         /// <summary>

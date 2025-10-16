@@ -14,9 +14,11 @@ namespace HabitTracker.Application.Features.Habits.Commands.UpdateHabit
             RuleFor(v => v.Description)
                 .MaximumLength(200).WithMessage("Description must not exceed 200 characters.");
 
-            RuleFor(v => v.Title)
-               .NotEmpty().WithMessage("Frequency is required.")
-               .MaximumLength(200).WithMessage("Name must not exceed 200 characters.");
+            RuleFor(v => v.Frequency)
+               .NotEmpty().WithMessage("Frequency is required.");
+
+            RuleFor(v => v.Category)
+               .NotEmpty().WithMessage("Frequency is required.");
         }
     }
 }

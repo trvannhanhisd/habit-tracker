@@ -1,5 +1,6 @@
 ﻿using HabitTracker.Application.Common.Mappings;
 using HabitTracker.Domain.Entity;
+using static HabitTracker.Domain.Entity.Habit;
 
 namespace HabitTracker.Application.Common.ViewModels
 {
@@ -9,7 +10,9 @@ namespace HabitTracker.Application.Common.ViewModels
         public int UserId { get; set; }
         public string Title { get; set; } = "";
         public string? Description { get; set; }
-        public string Frequency { get; set; } = "Daily"; // "Daily", "Weekly", etc.
+        public HabitFrequency Frequency { get; set; } 
+        public HabitCategory Category { get; set; }
+        public int CurrentStreak { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool IsArchived { get; set; } = false;
     }

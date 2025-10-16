@@ -16,14 +16,16 @@ namespace HabitTracker.API.Examples.ViewModel
                         Id = 1,
                         Title = "Drink Water 💧",
                         Description = "Uống 2 lít nước mỗi ngày",
-                        Frequency = "Daily"
+                        Frequency = Domain.Entity.Habit.HabitFrequency.Daily,
+                        Category = Domain.Entity.Habit.HabitCategory.General
                     },
                     new HabitViewModel
                     {
                         Id = 2,
                         Title = "Exercise 🏋️",
                         Description = "Tập thể dục 30 phút mỗi ngày",
-                        Frequency = "Daily"
+                        Frequency = Domain.Entity.Habit.HabitFrequency.Daily,
+                        Category = Domain.Entity.Habit.HabitCategory.General
                     }
                 },
                 200

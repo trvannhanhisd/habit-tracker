@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using HabitTracker.Domain.Exceptions.Auth;
 using HabitTracker.Application.Tests.Helpers;
 using HabitTracker.Application.Common.ViewModels;
+using static HabitTracker.Domain.Entity.Habit;
 
 namespace HabitTracker.Application.Tests.Habits.Commands
 {
@@ -49,7 +50,8 @@ namespace HabitTracker.Application.Tests.Habits.Commands
             {
                 Title = "Read a book",
                 Description = "Read for 30 minutes",
-                Frequency = "Daily"
+                Frequency = HabitFrequency.Daily,
+                Category = HabitCategory.General
             };
 
             var fakeHabit = new Habit
@@ -86,7 +88,10 @@ namespace HabitTracker.Application.Tests.Habits.Commands
         public async Task Handle_ShouldThrowException_WhenTitleIsEmpty()
         {
             // ARRANGE
-            var command = new CreateHabitCommand { Title = "", Description = "test", Frequency = "Daily" };
+            var command = new CreateHabitCommand { Title = "", Description = "test",
+                Frequency = HabitFrequency.Daily,
+                Category = HabitCategory.General
+            };
 
             // ACT
             Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
@@ -113,7 +118,8 @@ namespace HabitTracker.Application.Tests.Habits.Commands
             {
                 Title = "Workout",
                 Description = "Pushups",
-                Frequency = "Daily"
+                Frequency = HabitFrequency.Daily,
+                Category = HabitCategory.General
             };
 
             // ACT
@@ -131,7 +137,8 @@ namespace HabitTracker.Application.Tests.Habits.Commands
             {
                 Title = "Meditate",
                 Description = "Morning session",
-                Frequency = "Daily"
+                Frequency = HabitFrequency.Daily,
+                Category = HabitCategory.General
             };
 
             _habitRepositoryMock.Setup(r => r.CreateHabitAsync(It.IsAny<Habit>()))
@@ -155,7 +162,8 @@ namespace HabitTracker.Application.Tests.Habits.Commands
             {
                 Title = "Sleep early",
                 Description = "Go to bed before 11PM",
-                Frequency = "Daily"
+                Frequency = HabitFrequency.Daily,
+                Category = HabitCategory.General
             };
 
             var fakeHabit = new Habit
@@ -174,7 +182,8 @@ namespace HabitTracker.Application.Tests.Habits.Commands
                 {
                     Title = "Sleep early",
                     Description = "Go to bed before 11PM",
-                    Frequency = "Daily"
+                    Frequency = HabitFrequency.Daily,
+                    Category = HabitCategory.General
                 });
 
             // ACT
@@ -183,7 +192,7 @@ namespace HabitTracker.Application.Tests.Habits.Commands
             // ASSERT
             result.Title.Should().Be("Sleep early");
             result.Description.Should().Be("Go to bed before 11PM");
-            result.Frequency.Should().Be("Daily");
+            result.Frequency.Should().Be(HabitFrequency.Daily);
         }
     }
 }

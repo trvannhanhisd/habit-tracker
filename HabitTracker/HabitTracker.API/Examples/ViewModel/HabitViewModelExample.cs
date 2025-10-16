@@ -14,7 +14,7 @@ namespace HabitTracker.API.Examples.ViewModel
                     Id = 1,
                     Title = "Drink Water 💧",
                     Description = "Uống 2 lít nước mỗi ngày",
-                    Frequency = "Daily"
+                    Frequency = Domain.Entity.Habit.HabitFrequency.Daily
                 },
                 200
             );

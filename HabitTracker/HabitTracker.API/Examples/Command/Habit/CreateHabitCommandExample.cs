@@ -1,5 +1,6 @@
 ﻿using HabitTracker.Application.Features.Habits.Commands.CreateHabit;
 using Swashbuckle.AspNetCore.Filters;
+using static HabitTracker.Domain.Entity.Habit;
 
 namespace HabitTracker.API.Examples.Command.Habit
 {
@@ -11,7 +12,8 @@ namespace HabitTracker.API.Examples.Command.Habit
             {
                 Title = "Drink Water 💧",
                 Description = "Uống 2 lít nước mỗi ngày để khỏe da và cơ thể",
-                Frequency = "Daily"
+                Frequency = HabitFrequency.Daily,
+                Category = HabitCategory.General
             };
         }
     }

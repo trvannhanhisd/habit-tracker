@@ -46,7 +46,8 @@ namespace HabitTracker.Application.Features.Habits.Commands.CreateHabit
                     UserId = userId,
                     Title = request.Title,
                     Description = request.Description,
-                    Frequency = request.Frequency
+                    Frequency = request.Frequency,
+                    Category = request.Category,
                 };
 
                 var result = await _habitRepository.CreateHabitAsync(habit);
