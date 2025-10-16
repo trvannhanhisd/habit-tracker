@@ -23,6 +23,12 @@ namespace HabitTracker.API.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Lấy danh sách tất cả người dùng.
+        /// API này trả về danh sách người dùng cho admin.
+        /// </summary>
+        /// <returns>Danh sách người dùng</returns>
+        /// <response code="200">Lấy danh sách thành công</response>
         [Authorize(Roles = "Admin")]
         [HttpGet]
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(ListUserViewModelExample))]
@@ -34,6 +40,14 @@ namespace HabitTracker.API.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Lấy thông tin người dùng theo ID.
+        /// API này trả về chi tiết một người dùng.
+        /// </summary>
+        /// <param name="userId">ID của người dùng</param>
+        /// <returns>Thông tin người dùng</returns>
+        /// <response code="200">Lấy thông tin thành công</response>
+        /// <response code="404">Không tìm thấy người dùng</response>
         [HttpGet("{userId}")]
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(UserViewModelExample))]
         public async Task<IActionResult> GetUserById(int userId)
@@ -48,6 +62,15 @@ namespace HabitTracker.API.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Cập nhật thông tin người dùng theo ID.
+        /// API này cho phép chỉnh sửa thông tin người dùng.
+        /// </summary>
+        /// <param name="userId">ID của người dùng</param>
+        /// <param name="command">Dữ liệu cập nhật</param>
+        /// <returns>Trạng thái cập nhật</returns>
+        /// <response code="204">Cập nhật thành công</response>
+        /// <response code="400">Yêu cầu không hợp lệ</response>
         [HttpPut("{userId}")]
         [SwaggerRequestExample(typeof(UpdateUserCommand), typeof(UpdateUserCommandExample))]
         [SwaggerResponseExample(StatusCodes.Status204NoContent, typeof(ApiResponse<object>))]

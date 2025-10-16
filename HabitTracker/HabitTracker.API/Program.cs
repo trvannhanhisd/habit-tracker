@@ -14,6 +14,10 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using HabitTracker.API.Configurations;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using HabitTracker.API.Hubs;
+using HabitTracker.API.Services;
+using HabitTracker.Application.Common.Interfaces;
+using System.Reflection;
 
 var isTesting = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing";
 
@@ -62,6 +66,14 @@ builder.Services.AddSwaggerGen(c =>
         });
     }
 
+    // Thêm đường dẫn đến file XML
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
+
     // Giữ nguyên các cấu hình khác
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -105,6 +117,7 @@ builder.Services.AddApiVersioning(options =>
     options.DefaultApiVersion = new ApiVersion(1, 0); 
     options.AssumeDefaultVersionWhenUnspecified = true; 
     options.ReportApiVersions = true;
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
     // Cấu hình hỗ trợ nhiều chiến lược Versioning (URL, query paraeter, header)
     //options.ApiVersionReader = ApiVersionReader.Combine(
     //    new UrlSegmentApiVersionReader(), // ví dụ: /api/v1/Habit
@@ -115,8 +128,8 @@ builder.Services.AddApiVersioning(options =>
 
 builder.Services.AddVersionedApiExplorer(options =>
 {
-    options.GroupNameFormat = "'v'VVV"; 
-    options.SubstituteApiVersionInUrl = true; 
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
 });
 
 // Cấu hình Hangfire
@@ -129,18 +142,28 @@ builder.Services.AddQuartz(q =>
 {
     var jobKey = new JobKey("ScheduleMissedHabitsJob");
     q.AddJob<ScheduleMissedHabitsJob>(opts => opts.WithIdentity(jobKey));
+
+    // Chạy mỗi ngày lúc 23:59
     q.AddTrigger(opts => opts.ForJob(jobKey)
         .WithIdentity("ScheduleMissedHabitsJob-trigger")
         .WithCronSchedule("0 59 23 * * ?"));
 });
+
+
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
+
+builder.Services.AddSignalR();
+
+builder.Services.AddScoped<INotificationService, SignalRNotificationService>();
+
 var app = builder.Build();
 
 
 var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
+app.MapHub<NotificationHub>("/hubs/notification");
 
 // Hangfire Dashboard
 app.UseHangfireDashboard("/hangfire");
