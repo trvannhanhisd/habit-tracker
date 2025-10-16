@@ -13,7 +13,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HabitTracker.Infrastructure
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HabitTracker.Application.Tests", "HabitTracker.Application.Tests\HabitTracker.Application.Tests.csproj", "{E8133DB0-F6BC-43F5-87A6-114F71BFF851}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HabitTracker.IntegrationTests", "HabitTracker.IntegrationTests\HabitTracker.IntegrationTests.csproj", "{FDB7745A-264F-4D50-835B-54A353ACF438}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HabitTracker.IntegrationTests", "HabitTracker.IntegrationTests\HabitTracker.IntegrationTests.csproj", "{FDB7745A-264F-4D50-835B-54A353ACF438}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{3C7344AE-9CF2-4DAA-92B9-3E007967DFA4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{174468DD-17DA-432E-8114-B2A0B197B5A2}"
+	ProjectSection(SolutionItems) = preProject
+		deploy.yml = deploy.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B43644D6-0654-41D4-B26C-85195254D64C}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +60,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{174468DD-17DA-432E-8114-B2A0B197B5A2} = {3C7344AE-9CF2-4DAA-92B9-3E007967DFA4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD31507E-F383-4E77-8CEC-C1052D4F4D98}

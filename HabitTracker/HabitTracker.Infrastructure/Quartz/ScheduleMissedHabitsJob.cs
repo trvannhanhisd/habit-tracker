@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Quartz;
+using static HabitTracker.Domain.Entity.Habit;
 
 namespace HabitTracker.Infrastructure.Quartz
 {
@@ -22,7 +23,9 @@ namespace HabitTracker.Infrastructure.Quartz
         {
             _logger.LogInformation("[Quartz] Triggered Hangfire job at {Time}", DateTime.Now);
 
+            // enqueue background job (chỉ gọi 1 job duy nhất, logic nằm bên trong)
             BackgroundJob.Enqueue(() => ExecuteCommandViaMediator());
+
             return Task.CompletedTask;
         }
 
@@ -31,7 +34,25 @@ namespace HabitTracker.Infrastructure.Quartz
         {
             using var scope = _scopeFactory.CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-            await mediator.Send(new CreateMissedHabitLogsCommand());
+
+            var now = DateTime.UtcNow;
+
+            //Luôn xử lý Daily habit mỗi ngày
+            await mediator.Send(new CreateMissedHabitLogsCommand(HabitFrequency.Daily));
+
+            // Chủ nhật → xử lý Weekly habit
+            if (now.DayOfWeek == DayOfWeek.Sunday)
+            {
+                await mediator.Send(new CreateMissedHabitLogsCommand(HabitFrequency.Weekly));
+            }
+
+            // Ngày cuối tháng → xử lý Monthly habit
+            if (now.Day == DateTime.DaysInMonth(now.Year, now.Month))
+            {
+                await mediator.Send(new CreateMissedHabitLogsCommand(HabitFrequency.Monthly));
+            }
+
+            _logger.LogInformation("[Hangfire] Finished executing missed habit jobs at {Time}", DateTime.Now);
         }
     }
 }

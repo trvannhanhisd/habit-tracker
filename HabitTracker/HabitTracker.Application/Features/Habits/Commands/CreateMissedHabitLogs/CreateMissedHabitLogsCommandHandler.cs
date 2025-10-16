@@ -45,6 +45,16 @@ namespace HabitTracker.Application.Features.Habits.Commands.CreateMissedHabitLog
                     return Unit.Value;
                 }
 
+                var filteredHabits = habits
+                .Where(h => h.Frequency == request.Frequency)
+                .ToList();
+
+                if (!filteredHabits.Any())
+                {
+                    _logger.LogInformation("No {Frequency} habits found for {Date}", request.Frequency, today);
+                    return Unit.Value;
+                }
+
                 foreach (var habit in habits)
                 {
                     habit.MarkAsMissed(today);
