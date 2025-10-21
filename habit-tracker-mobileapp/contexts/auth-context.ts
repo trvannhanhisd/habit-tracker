@@ -4,7 +4,7 @@ import { createContext } from "react";
 export interface AuthContextType {
   user: User | null;
   setUser: (user: User | null) => void;
-  loading: boolean;
+  isLoadingUser: boolean;
   login: (username: string, password: string) => Promise<string | null>;
   register: (username: string, email: string, password: string) => Promise<string | null>;
   logout: () => void;

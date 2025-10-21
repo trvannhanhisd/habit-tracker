@@ -1,15 +1,14 @@
-import { TokenResponse, User } from "@/types/user";
+import { getCurrentUser, login, register } from "@/services/auth.service";
 import {
-    ACCESS_TOKEN_KEY,
-    REFRESH_TOKEN_KEY,
-    clearToken,
-    getToken,
-    setToken,
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
+  clearToken,
+  getToken,
+  setToken,
 } from "@/utils/helpers/authHelpers";
 import React, { useEffect, useState } from "react";
-import api, { authApi, endpoints } from "../services/api";
 
-import { ApiResponse } from "@/types/response";
+import { User } from "@/types/user";
 import { AuthContext } from "./auth-context";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -21,10 +20,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const accessToken = await getToken(ACCESS_TOKEN_KEY); // await
+        const accessToken = await getToken(ACCESS_TOKEN_KEY);
         if (accessToken) {
-          const res = await authApi.get(endpoints.currentUser);
-          setUser(res.data.data);
+          const userData = await getCurrentUser(accessToken);
+          setUser(userData);
         }
       } catch (err) {
         console.error("Không thể lấy user:", err);
@@ -37,22 +36,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     initAuth();
   }, []);
 
-  const login = async (username: string, password: string) => {
-    
+  const loginHandler = async (username: string, password: string) => {
     try {
-      const res = await api.post<ApiResponse<TokenResponse>>(endpoints.login, {
-        username,
-        password,
-      });
-      const { accessToken, refreshToken } = res.data.data; // Lấy từ res.data.data
-
-      await setToken(ACCESS_TOKEN_KEY, accessToken); // await
-      await setToken(REFRESH_TOKEN_KEY, refreshToken); // await
-
-      const me = await authApi.get<ApiResponse<User>>(endpoints.currentUser, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      setUser(me.data.data);
+      const { accessToken, refreshToken } = await login(username, password);
+      await setToken(ACCESS_TOKEN_KEY, accessToken);
+      await setToken(REFRESH_TOKEN_KEY, refreshToken);
+      const userData = await getCurrentUser(accessToken);
+      setUser(userData);
       return null;
     } catch (error) {
       if (error instanceof Error) {
@@ -62,18 +52,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const register = async (
-    username: string,
-    email: string,
-    password: string
-  ) => {
+  const registerHandler = async (username: string, email: string, password: string) => {
     try {
-      await api.post<ApiResponse<User>>(endpoints.register, {
-        username,
-        email,
-        password,
-      });
-      await login(username, password); // Sau khi đăng ký, tự động đăng nhập
+      await register(username, email, password);
+      await loginHandler(username, password); // Tự động đăng nhập sau khi đăng ký
       return null;
     } catch (error) {
       if (error instanceof Error) {
@@ -88,13 +70,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       await clearToken();
       setUser(null);
     } catch (error) {
-      console.log(error);
+      console.error("Error during logout:", error);
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, isLoadingUser, login, register, logout }}
+      value={{ user, setUser, isLoadingUser, login: loginHandler, register: registerHandler, logout }}
     >
       {children}
     </AuthContext.Provider>

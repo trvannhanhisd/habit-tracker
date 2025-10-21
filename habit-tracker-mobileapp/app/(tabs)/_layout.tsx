@@ -3,22 +3,9 @@ import { Tabs } from "expo-router";
 
 export default function RootLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        headerStyle: { backgroundColor: "#f5f5f5" },
-        headerShadowVisible: false,
-        tabBarStyle: {
-          backgroundColor: "#f5f5f5",
-          borderTopWidth: 0,
-          elevation: 0,
-          shadowOpacity: 0,
-        },
-        tabBarActiveTintColor: "#6200ee",
-        tabBarInactiveTintColor: "#666666",
-      }}
-    >
+    <Tabs>
       <Tabs.Screen
-        name="index"
+        name="home/index"
         options={{
           title: "Today's Habit",
           tabBarIcon: ({ color, size }) => (
@@ -31,7 +18,7 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
-        name="streaks"
+        name="streak/index"
         options={{
           title: "Streaks",
           tabBarIcon: ({ color, size }) => (
@@ -43,9 +30,8 @@ export default function RootLayout() {
           ),
         }}
       />
-
       <Tabs.Screen
-        name="add-habit"
+        name="addHabit/index"
         options={{
           title: "Add Habit",
           tabBarIcon: ({ color, size }) => (
