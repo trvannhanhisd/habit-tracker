@@ -1,8 +1,10 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 
 import { AuthProvider } from "@/contexts/auth_provider";
+import { HabitProvider } from "@/contexts/habit-provider";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -25,16 +27,23 @@ function RouteGuard({ children }: { children: React.ReactNode }) {
 }
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <PaperProvider>
-        <SafeAreaProvider>
-          <RouteGuard>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-          </RouteGuard>
-        </SafeAreaProvider>
-      </PaperProvider>
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1}}>
+      <AuthProvider>
+        <HabitProvider>
+          <PaperProvider>
+            <SafeAreaProvider>
+              <RouteGuard>
+                <Stack>
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
+                </Stack>
+              </RouteGuard>
+            </SafeAreaProvider>
+          </PaperProvider>
+        </HabitProvider>
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }

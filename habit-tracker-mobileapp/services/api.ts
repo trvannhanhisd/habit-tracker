@@ -1,7 +1,7 @@
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, clearToken, getToken, setToken } from '@/utils/helpers/authHelpers';
 import axios, { AxiosError } from 'axios';
 
-export const BASE_URL = 'https://d4a83ca6bed3.ngrok-free.app/v1';
+export const BASE_URL = 'https://9b7dd8743f03.ngrok-free.app/v1';
 
 // ---- Endpoints ----
 export const endpoints = {  
@@ -13,9 +13,9 @@ export const endpoints = {
   // User
   currentUser: '/User/me', 
 
-  //Habit
-  habit: 'Habit'
-
+  // Habit
+  habit: '/Habit',
+  userHabits: '/Habit/user'
 };
 
 // ---- API instances ----
@@ -51,20 +51,20 @@ authApi.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = await getToken(REFRESH_TOKEN_KEY); 
-        if (!refreshToken) {
+        const refreshTokenValue = await getToken(REFRESH_TOKEN_KEY); 
+        if (!refreshTokenValue) {
           await clearToken(); 
           return Promise.reject(error);
         }
 
-        const response = await api.post(endpoints.refreshToken, { refreshToken });
+        const response = await api.post(endpoints.refreshToken, { refreshToken: refreshTokenValue });
         const { accessToken, refreshToken: newRefreshToken } = response.data as {
           accessToken: string;
           refreshToken: string;
         };
 
-        await setToken(ACCESS_TOKEN_KEY, accessToken); // await
-        if (newRefreshToken) await setToken(REFRESH_TOKEN_KEY, newRefreshToken); // await
+        await setToken(ACCESS_TOKEN_KEY, accessToken);
+        if (newRefreshToken) await setToken(REFRESH_TOKEN_KEY, newRefreshToken);
 
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -72,7 +72,7 @@ authApi.interceptors.response.use(
 
         return authApi(originalRequest);
       } catch (refreshError) {
-        await clearToken(); // await
+        await clearToken();
         return Promise.reject(refreshError);
       }
     }
