@@ -1,7 +1,7 @@
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, clearToken, getToken, setToken } from '@/utils/helpers/authHelpers';
 import axios, { AxiosError } from 'axios';
 
-export const BASE_URL = 'https://9b7dd8743f03.ngrok-free.app/v1';
+export const BASE_URL = 'https://80ea2732281d.ngrok-free.app/v1';
 
 // ---- Endpoints ----
 export const endpoints = {  
