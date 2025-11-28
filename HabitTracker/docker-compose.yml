@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  # --- SQL Server container ---
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - habit-network
+
+  # --- ASP.NET Core Web API container ---
+  api:
+    build:
+      context: .
+      dockerfile: HabitTracker.API/Dockerfile
+    container_name: habittracker-api
+    ports:
+      - "8080:80"
+    depends_on:
+      - sqlserver
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=HabitTrackerDB;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True
+    networks:
+      - habit-network
+
+# --- Shared network for communication ---
+networks:
+  habit-network:
+    driver: bridge
