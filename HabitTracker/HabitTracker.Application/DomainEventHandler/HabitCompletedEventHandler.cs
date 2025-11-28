@@ -43,6 +43,11 @@ namespace HabitTracker.Application.DomainEventHandler
             if(habit != null)
             {
                 habit.CurrentStreak += 1;
+                habit.LastCompletedAt = DateTime.UtcNow;
+                if(habit.CurrentStreak > habit.LongestStreak)
+                {
+                    habit.LongestStreak += 1;
+                }
             }
 
             // Lấy tất cả habit active của user

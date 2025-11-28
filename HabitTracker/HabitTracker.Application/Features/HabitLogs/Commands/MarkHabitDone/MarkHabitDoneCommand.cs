@@ -4,7 +4,7 @@ using MediatR;
 
 namespace HabitTracker.Application.Features.HabitLogs.Commands.MarkHabitDone
 {
-    public class MarkHabitDoneCommand : IRequest<HabitLogViewModel>
+    public class MarkHabitDoneCommand : IRequest<HabitViewModel>
     {
         public int HabitId { get; set; }
         public DateTime Date { get; set; }

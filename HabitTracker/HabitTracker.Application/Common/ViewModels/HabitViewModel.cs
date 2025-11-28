@@ -13,7 +13,11 @@ namespace HabitTracker.Application.Common.ViewModels
         public HabitFrequency Frequency { get; set; } 
         public HabitCategory Category { get; set; }
         public int CurrentStreak { get; set; }
+        public int LongestStreak { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? LastCompletedAt { get; set; }
+        public string? PetName { get; set; }
+        public bool CanEvolve { get; set; } 
         public bool IsArchived { get; set; } = false;
     }
 }

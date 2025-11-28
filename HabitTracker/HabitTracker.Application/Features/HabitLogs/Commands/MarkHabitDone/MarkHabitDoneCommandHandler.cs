@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace HabitTracker.Application.Features.HabitLogs.Commands.MarkHabitDone
 {
-    public class MarkHabitDoneCommandHandler : IRequestHandler<MarkHabitDoneCommand, HabitLogViewModel>
+    public class MarkHabitDoneCommandHandler : IRequestHandler<MarkHabitDoneCommand, HabitViewModel>
     {
         private readonly IHabitLogRepository _habitLogRepository;
         private readonly IHabitRepository _habitRepository;
@@ -30,7 +30,7 @@ namespace HabitTracker.Application.Features.HabitLogs.Commands.MarkHabitDone
             _logger = logger;
         }
 
-        public async Task<HabitLogViewModel> Handle(MarkHabitDoneCommand request, CancellationToken cancellationToken)
+        public async Task<HabitViewModel> Handle(MarkHabitDoneCommand request, CancellationToken cancellationToken)
         {
             var userId = _userContext.GetUserId();
             if (userId == 0)
@@ -60,7 +60,7 @@ namespace HabitTracker.Application.Features.HabitLogs.Commands.MarkHabitDone
 
             _logger.LogInformation("Habit {HabitId} marked as done successfully for user {UserId} on {Date}", request.HabitId, userId, request.Date);
 
-            return _mapper.Map<HabitLogViewModel>(log);
+            return _mapper.Map<HabitViewModel>(habit);
         }
     }
 }
