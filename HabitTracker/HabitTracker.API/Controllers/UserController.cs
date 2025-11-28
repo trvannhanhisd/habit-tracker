@@ -3,6 +3,7 @@ using HabitTracker.API.Examples.ViewModel;
 using HabitTracker.API.Models;
 using HabitTracker.Application.Common.ViewModels;
 using HabitTracker.Application.Features.Users.Commands.UpdateUser;
+using HabitTracker.Application.Features.Users.Queries.GetCurrentUser;
 using HabitTracker.Application.Features.Users.Queries.GetUserById;
 using HabitTracker.Application.Features.Users.Queries.GetUsers;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ using Swashbuckle.AspNetCore.Filters;
 namespace HabitTracker.API.Controllers
 {
     [ApiVersion("1.0")]
-    [Route("api/[controller]")]
+    [Route("v{version:apiVersion}/[controller]")]
     [ApiController]
     public class UserController : ApiControllerBase
     {
@@ -25,7 +26,6 @@ namespace HabitTracker.API.Controllers
 
         /// <summary>
         /// Lấy danh sách tất cả người dùng.
-        /// API này trả về danh sách người dùng cho admin.
         /// </summary>
         /// <returns>Danh sách người dùng</returns>
         /// <response code="200">Lấy danh sách thành công</response>
@@ -42,7 +42,6 @@ namespace HabitTracker.API.Controllers
 
         /// <summary>
         /// Lấy thông tin người dùng theo ID.
-        /// API này trả về chi tiết một người dùng.
         /// </summary>
         /// <param name="userId">ID của người dùng</param>
         /// <returns>Thông tin người dùng</returns>
@@ -58,6 +57,25 @@ namespace HabitTracker.API.Controllers
             {
                 return NotFound($"User with ID {userId} not found.");
             }
+            var response = new ApiResponse<UserViewModel>(user);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Lấy thông tin người dùng đang đăng nhập
+        /// </summary>
+        /// <returns>Thông tin người dùng</returns>
+        /// <response code="200">Lấy thông tin thành công</response>
+        /// <response code="404">Không tìm thấy người dùng</response>
+        [HttpGet("me")]
+        [Authorize]
+        [SwaggerResponseExample(StatusCodes.Status200OK, typeof(UserViewModelExample))]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            _logger.LogInformation("Getting login user at {time}", DateTime.Now);
+
+            var user = await Mediator.Send(new GetCurrentUserQuery());
+
             var response = new ApiResponse<UserViewModel>(user);
             return Ok(response);
         }

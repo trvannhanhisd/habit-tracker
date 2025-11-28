@@ -141,12 +141,12 @@ namespace HabitTracker.API.Controllers
         /// </summary>
         /// <param name="habitId">ID của thói quen</param>
         /// <returns>Thông tin log hoàn thành</returns>
-        /// <response code="201">Đánh dấu thành công</response>
+        /// <response code="200">Đánh dấu thành công</response>
         /// <response code="401">Không có quyền truy cập</response>
         [Authorize(Roles = "User")]
-        [HttpPost("{habitId}/done")]
-        [SwaggerResponseExample(StatusCodes.Status201Created, typeof(HabitLogViewModelExample))]
-        [ProducesResponseType(typeof(ApiResponse<HabitLogViewModel>), StatusCodes.Status201Created)]
+        [HttpPut("{habitId}/done")]
+        [SwaggerResponseExample(StatusCodes.Status200OK, typeof(HabitViewModelExample))]
+        [ProducesResponseType(typeof(ApiResponse<HabitViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> MarkHabitDone(int habitId)
         {
@@ -157,14 +157,9 @@ namespace HabitTracker.API.Controllers
                 Date = DateTime.UtcNow
             };
 
-            var createdHabitLog = await Mediator.Send(command);
+            var updatedhabit = await Mediator.Send(command);
 
-            var response = new ApiResponse<HabitLogViewModel>(createdHabitLog, 201);
-            return CreatedAtAction(
-                actionName: nameof(HabitLogController.GetHabitLogById),
-                controllerName: "HabitLog",
-                routeValues: new { habitLogId = createdHabitLog.Id },
-                response);
+            return Ok(new ApiResponse<HabitViewModel>(updatedhabit, 200));
         }
 
         /// <summary>

@@ -18,6 +18,7 @@ using HabitTracker.API.Hubs;
 using HabitTracker.API.Services;
 using HabitTracker.Application.Common.Interfaces;
 using System.Reflection;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var isTesting = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Testing";
 
@@ -48,6 +49,12 @@ builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddHttpClient("PokeAPI", client =>
+{
+    client.BaseAddress = new Uri("https://pokeapi.co/api/v2/");
+    client.Timeout = TimeSpan.FromSeconds(10); // Set timeout for PokeAPI requests
+});
+
 // Cấu hình Swagger
 builder.Services.AddSwaggerGen(c =>
 {
@@ -74,7 +81,7 @@ builder.Services.AddSwaggerGen(c =>
         c.IncludeXmlComments(xmlPath);
     }
 
-    // Giữ nguyên các cấu hình khác
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -111,6 +118,20 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowNgrok",
+      policy => policy.WithOrigins("https://*.ngrok-free.app")
+                     .AllowAnyHeader()
+                     .AllowAnyMethod()
+                     .AllowCredentials());
+});
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(7224, listenOptions => listenOptions.UseHttps());
+});
 
 builder.Services.AddApiVersioning(options =>
 {
@@ -180,6 +201,12 @@ if (app.Environment.IsDevelopment())
         }
     });
 }
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+});
+app.UseCors("AllowNgrok");
 
 app.UseHttpsRedirection();
 
