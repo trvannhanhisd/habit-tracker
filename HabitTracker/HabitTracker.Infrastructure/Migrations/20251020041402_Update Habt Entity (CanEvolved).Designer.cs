@@ -4,6 +4,7 @@ using HabitTracker.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HabitTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(HabitDbContext))]
-    partial class HabitDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251020041402_Update Habt Entity (CanEvolved)")]
+    partial class UpdateHabtEntityCanEvolved
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,9 +56,6 @@ namespace HabitTracker.Infrastructure.Migrations
 
                     b.Property<DateTime?>("LastCompletedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("LongestStreak")
-                        .HasColumnType("int");
 
                     b.Property<string>("PetName")
                         .HasColumnType("nvarchar(max)");

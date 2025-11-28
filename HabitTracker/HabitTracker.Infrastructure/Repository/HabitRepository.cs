@@ -18,7 +18,7 @@ namespace HabitTracker.Infrastructure.Repository
             _context = context;
         }
 
-        public async Task<Habit?> GetHabitByIdAsync(int habitId)
+        public async Task<Habit?> GetHabitByIdAsync(int habitId, CancellationToken cancellationToken = default)
         {
             return await _context.Habits.FindAsync(habitId);
         }
@@ -49,13 +49,13 @@ namespace HabitTracker.Infrastructure.Repository
                 .FirstOrDefaultAsync(h => h.Id == habitId && h.UserId == userId);
         }
 
-        public Task<Habit> CreateHabitAsync(Habit habit)
+        public Task<Habit> CreateHabitAsync(Habit habit, CancellationToken cancellationToken = default)
         {
             _context.Habits.Add(habit);
             return Task.FromResult(habit);
         }
 
-        public Task UpdateHabitAsync(Habit habit)
+        public Task UpdateHabitAsync(Habit habit, CancellationToken cancellationToken = default)
         {
             _context.Habits.Update(habit);
             return Task.CompletedTask;
