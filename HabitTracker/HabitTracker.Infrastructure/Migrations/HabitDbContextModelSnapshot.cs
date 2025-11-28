@@ -30,6 +30,9 @@ namespace HabitTracker.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("CanEvolve")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
@@ -47,6 +50,15 @@ namespace HabitTracker.Infrastructure.Migrations
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastCompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LongestStreak")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PetName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()

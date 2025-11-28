@@ -1,23 +1,40 @@
 ﻿using HabitTracker.Domain.Common;
 using HabitTracker.Domain.Events;
 
-
 namespace HabitTracker.Domain.Entity
 {
     public class Habit : EntityBase
     {
-        public int Id { get; set; }              // Primary key
-        public int UserId { get; set; }          // FK tới User
-        public string Title { get; set; } = "";   // Tên thói quen
-        public string? Description { get; set; }  // Mô tả
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public string Title { get; set; } = "";
+        public string? Description { get; set; }
         public HabitFrequency Frequency { get; set; } = HabitFrequency.Daily;
         public HabitCategory Category { get; set; } = HabitCategory.General;
         public int CurrentStreak { get; set; } = 0;
+        public int LongestStreak { get; set; } = 0;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public bool IsArchived { get; set; } = false; // Nếu user muốn tạm dừng habit
+        public DateTime? LastCompletedAt { get; set; }
+        public string? PetName { get; set; }
+        public bool CanEvolve { get; set; } = false;
+        public bool IsArchived { get; set; } = false;
 
         public User? User { get; set; }
         public List<HabitLog> Logs { get; set; } = new List<HabitLog>();
+
+        public Habit(int userId, string title, string? description, HabitFrequency frequency, HabitCategory category)
+        {
+            UserId = userId;
+            Title = title;
+            Description = description;
+            Frequency = frequency;
+            Category = category;
+        }
+
+        public void AddHabitCreatedEvent(int habitId)
+        {
+            AddDomainEvent(new HabitCreatedEvent(habitId, UserId, Category));
+        }
 
 
         public void MarkAsCompleted(DateTime date)
@@ -47,7 +64,6 @@ namespace HabitTracker.Domain.Entity
 
             AddDomainEvent(new HabitMissedEvent(UserId, Id));
         }
-
 
         public enum HabitCategory
         {

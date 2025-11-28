@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using HabitTracker.Application.Common.Behaviours;
+using HabitTracker.Application.DomainEventHandler;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -16,6 +17,7 @@ namespace HabitTracker.Application
             {
                 ctg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
                 ctg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+                ctg.RegisterServicesFromAssembly(typeof(HabitCreatedEventHandler).Assembly);
             });
 
             return services;

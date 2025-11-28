@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HabitTracker.Application.Common.ViewModels;
 using HabitTracker.Domain.Entity;
+using HabitTracker.Domain.Events;
 using HabitTracker.Domain.Exceptions.Auth;
 using HabitTracker.Domain.Repository;
 using HabitTracker.Domain.Services;
@@ -16,14 +17,18 @@ namespace HabitTracker.Application.Features.Habits.Commands.CreateHabit
         private readonly IUserContext _userContext;
         private readonly ILogger<CreateHabitCommandHandler> _logger;
 
-        public CreateHabitCommandHandler(IHabitRepository habitRepository, IMapper mapper, 
-                                        IUserContext userContext, ILogger<CreateHabitCommandHandler> logger)
+        public CreateHabitCommandHandler(
+            IHabitRepository habitRepository,
+            IMapper mapper,
+            IUserContext userContext,
+            ILogger<CreateHabitCommandHandler> logger)
         {
             _habitRepository = habitRepository;
             _mapper = mapper;
             _userContext = userContext;
             _logger = logger;
         }
+
         public async Task<HabitViewModel> Handle(CreateHabitCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.Title))
@@ -41,16 +46,23 @@ namespace HabitTracker.Application.Features.Habits.Commands.CreateHabit
 
             try
             {
-                var habit = new Habit()
-                {
-                    UserId = userId,
-                    Title = request.Title,
-                    Description = request.Description,
-                    Frequency = request.Frequency,
-                    Category = request.Category,
-                };
+                var habit = new Habit(
+                    userId: userId,
+                    title: request.Title,
+                    description: request.Description,
+                    frequency: request.Frequency,
+                    category: request.Category
+                );
 
                 var result = await _habitRepository.CreateHabitAsync(habit);
+
+                // Lưu vào cơ sở dữ liệu để gán HabitId
+                await _habitRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+
+                // Thêm sự kiện sau khi HabitId được gán
+                result.AddHabitCreatedEvent(result.Id);
+
+                // Lưu lại để dispatch sự kiện
                 await _habitRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
                 return _mapper.Map<HabitViewModel>(result);

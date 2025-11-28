@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.Filters;
 namespace HabitTracker.API.Controllers
 {
     [ApiVersion("1.0")]
-    [Route("api/[controller]")]
+    [Route("v{version:apiVersion}/[controller]")]
     [ApiController]
     public class HabitLogController : ApiControllerBase
     {

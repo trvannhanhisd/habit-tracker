@@ -174,7 +174,10 @@ export default function Index() {
   }, [user]);
 
   return (
-    <View style={styles.container}>
+    <ImageBackground 
+    source={{ uri: "https://res.cloudinary.com/dqpkxxzaf/image/upload/v1764328127/background_zjydw1.jpg" }}
+    style={styles.container}
+    resizeMode="cover">
       <View style={styles.header}>
         <Text variant="headlineSmall" style={styles.title}>
           Today&apos;s Habits
@@ -355,15 +358,14 @@ export default function Index() {
           ))
         )}
       </ScrollView>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#f5f5f5",
+  flex: 1,
+  padding: 16,
   },
   header: {
     flexDirection: "row",

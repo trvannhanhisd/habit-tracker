@@ -40,6 +40,8 @@ ScaffoldingReadMe.txt
 ~$*
 *~
 *.vs
+*/.vscode/
+
 CodeCoverage/
 
 # MSBuild Binary and Structured Log
