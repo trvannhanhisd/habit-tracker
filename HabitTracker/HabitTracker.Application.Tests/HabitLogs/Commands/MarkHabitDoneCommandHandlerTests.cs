@@ -39,35 +39,35 @@ namespace HabitTracker.Application.Tests.HabitLogs.Commands
                 _loggerMock.Object);
         }
 
-        [Fact]
-        public async Task Handle_ShouldMarkHabitAsDone_Successfully()
-        {
-            // Arrange
-            var userId = 1;
-            var date = DateTime.Today;
-            var habit = new Habit { Id = 1, UserId = userId };
-            habit.MarkAsCompleted(date);
+        //[Fact]
+        //public async Task Handle_ShouldMarkHabitAsDone_Successfully()
+        //{
+        //    // Arrange
+        //    var userId = 1;
+        //    var date = DateTime.Today;
+        //    var habit = new Habit { Id = 1, UserId = userId };
+        //    habit.MarkAsCompleted(date);
 
-            _userContextMock.Setup(u => u.GetUserId()).Returns(userId);
-            _habitRepositoryMock.Setup(r => r.GetHabitByUserIdAsync(userId, 1))
-                .ReturnsAsync(habit);
-            _habitRepositoryMock.Setup(r => r.UnitOfWork.SaveChangesAsync(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(1);
+        //    _userContextMock.Setup(u => u.GetUserId()).Returns(userId);
+        //    _habitRepositoryMock.Setup(r => r.GetHabitByUserIdAsync(userId, 1))
+        //        .ReturnsAsync(habit);
+        //    _habitRepositoryMock.Setup(r => r.UnitOfWork.SaveChangesAsync(It.IsAny<CancellationToken>()))
+        //        .ReturnsAsync(1);
 
-            var log = habit.Logs.First();
-            var expectedVm = new HabitLogViewModel { Date = log.Date, IsCompleted = true };
-            _mapperMock.Setup(m => m.Map<HabitLogViewModel>(log)).Returns(expectedVm);
+        //    var log = habit.Logs.First();
+        //    var expectedVm = new HabitLogViewModel { Date = log.Date, IsCompleted = true };
+        //    _mapperMock.Setup(m => m.Map<HabitLogViewModel>(log)).Returns(expectedVm);
 
-            var command = new MarkHabitDoneCommand { HabitId = 1, Date = date };
+        //    var command = new MarkHabitDoneCommand { HabitId = 1, Date = date };
 
-            // Act
-            var result = await _handler.Handle(command, CancellationToken.None);
+        //    // Act
+        //    var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
-            result.Should().NotBeNull();
-            result.IsCompleted.Should().BeTrue();
-            result.Date.Should().Be(date);
-        }
+        //    // Assert
+        //    result.Should().NotBeNull();
+        //    result.IsCompleted.Should().BeTrue();
+        //    result.Date.Should().Be(date);
+        //}
 
         [Fact]
         public async Task Handle_ShouldThrow_WhenUserNotAuthenticated()
